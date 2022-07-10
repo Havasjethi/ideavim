@@ -246,12 +246,19 @@ class ToActionMappingInfo(
   isRecursive: Boolean,
   owner: MappingOwner,
 ) : MappingInfo(fromKeys, isRecursive, owner) {
+  private val jumpTriggers: List<String> = listOf("GotoDeclaration", "GotoImplementation", "GotoSuperMethod");
+
   override fun getPresentableString(): String = "action $action"
 
   override fun execute(editor: VimEditor, context: ExecutionContext) {
     LOG.debug("Executing 'ToAction' mapping...")
     val editorDataContext = injector.executionContextManager.onEditor(editor, context)
     val dataContext = injector.executionContextManager.createCaretSpecificDataContext(editorDataContext, editor.currentCaret())
+
+    if (jumpTriggers.contains(action)) {
+      injector.markGroup.addJump(editor, true);
+    }
+
     injector.actionExecutor.executeAction(action, dataContext)
   }
 
