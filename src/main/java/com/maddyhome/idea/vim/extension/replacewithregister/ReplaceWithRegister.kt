@@ -18,7 +18,6 @@
 
 package com.maddyhome.idea.vim.extension.replacewithregister
 
-import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
 import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.api.ExecutionContext
@@ -115,21 +114,22 @@ class ReplaceWithRegister : VimExtension {
   }
 
   private class Operator : OperatorFunction {
-    override fun apply(editor: Editor, context: DataContext, selectionType: SelectionType): Boolean {
+    override fun apply(vimEditor: VimEditor, context: ExecutionContext, selectionType: SelectionType): Boolean {
+      val editor = (vimEditor as IjVimEditor).editor
       val range = getRange(editor) ?: return false
       val visualSelection = PutData.VisualSelection(
         mapOf(
-          editor.caretModel.primaryCaret.vim to VimSelection.create(
+          vimEditor.primaryCaret() to VimSelection.create(
             range.startOffset,
             range.endOffset - 1,
             selectionType,
-            IjVimEditor(editor)
+            vimEditor
           )
         ),
         selectionType
       )
       // todo multicaret
-      doReplace(editor, editor.vim.primaryCaret(), visualSelection)
+      doReplace(editor, vimEditor.primaryCaret(), visualSelection)
       return true
     }
 
@@ -152,7 +152,7 @@ class ReplaceWithRegister : VimExtension {
 
     private fun doReplace(editor: Editor, caret: VimCaret, visualSelection: PutData.VisualSelection) {
       val lastRegisterChar = injector.registerGroup.lastRegisterChar
-      val savedRegister = caret.registerStorage.getRegister(lastRegisterChar) ?: return
+      val savedRegister = caret.registerStorage.getRegister(caret, lastRegisterChar) ?: return
 
       var usedType = savedRegister.type
       var usedText = savedRegister.text
@@ -175,18 +175,18 @@ class ReplaceWithRegister : VimExtension {
       )
       ClipboardOptionHelper.IdeaputDisabler().use {
         VimPlugin.getPut().putText(
-            IjVimEditor(editor),
-            IjExecutionContext(EditorDataContext.init(editor)),
-            putData,
-            operatorArguments = OperatorArguments(
-              editor.vimStateMachine?.isOperatorPending ?: false,
-              0, editor.editorMode, editor.subMode
-            )
+          IjVimEditor(editor),
+          IjExecutionContext(EditorDataContext.init(editor)),
+          putData,
+          operatorArguments = OperatorArguments(
+            editor.vimStateMachine?.isOperatorPending ?: false,
+            0, editor.editorMode, editor.subMode
+          )
         )
       }
 
-      caret.registerStorage.saveRegister(savedRegister.name, savedRegister)
-      caret.registerStorage.saveRegister(VimPlugin.getRegister().defaultRegister, savedRegister)
+      caret.registerStorage.saveRegister(caret, savedRegister.name, savedRegister)
+      caret.registerStorage.saveRegister(caret, VimPlugin.getRegister().defaultRegister, savedRegister)
     }
   }
 }

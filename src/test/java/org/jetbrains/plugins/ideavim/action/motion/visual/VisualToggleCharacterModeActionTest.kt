@@ -28,8 +28,6 @@ import com.maddyhome.idea.vim.helper.vimSelectionStart
 import com.maddyhome.idea.vim.options.OptionConstants
 import com.maddyhome.idea.vim.options.OptionScope
 import com.maddyhome.idea.vim.vimscript.model.datatypes.VimString
-import org.jetbrains.plugins.ideavim.SkipNeovimReason
-import org.jetbrains.plugins.ideavim.TestWithoutNeovim
 import org.jetbrains.plugins.ideavim.VimTestCase
 import org.jetbrains.plugins.ideavim.rangeOf
 
@@ -230,7 +228,6 @@ class VisualToggleCharacterModeActionTest : VimTestCase() {
     )
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.MULTICARET)
   fun `test enter visual with count after visual operation multicaret`() {
     doTest(
       listOf("vedx", "1v"),

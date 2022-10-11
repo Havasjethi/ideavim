@@ -20,8 +20,6 @@ package org.jetbrains.plugins.ideavim.action.change.change.number
 
 import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.command.VimStateMachine
-import org.jetbrains.plugins.ideavim.SkipNeovimReason
-import org.jetbrains.plugins.ideavim.TestWithoutNeovim
 import org.jetbrains.plugins.ideavim.VimTestCase
 
 /**
@@ -114,7 +112,6 @@ class ChangeVisualNumberIncActionTest : VimTestCase() {
     )
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.MULTICARET)
   fun `test change number inc visual multiple cursor`() {
     typeTextInFile(
       injector.parser.parseKeys("Vj<C-A>"),

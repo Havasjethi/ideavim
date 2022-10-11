@@ -23,8 +23,6 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.maddyhome.idea.vim.command.VimStateMachine
 import com.maddyhome.idea.vim.helper.VimBehaviorDiffers
 import com.maddyhome.idea.vim.helper.experimentalApi
-import org.jetbrains.plugins.ideavim.SkipNeovimReason
-import org.jetbrains.plugins.ideavim.TestWithoutNeovim
 import org.jetbrains.plugins.ideavim.VimTestCase
 
 class MatchitGeneralTest : VimTestCase() {
@@ -38,7 +36,6 @@ class MatchitGeneralTest : VimTestCase() {
    * Tests to make sure we didn't break the default % motion
    */
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from Java comment start to end`() {
     doTest(
       "%",
@@ -52,11 +49,10 @@ class MatchitGeneralTest : VimTestCase() {
          *
          *$c/
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, JavaFileType.INSTANCE
+      fileType = JavaFileType.INSTANCE
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from Java comment end to start`() {
     doTest(
       "%",
@@ -70,11 +66,10 @@ class MatchitGeneralTest : VimTestCase() {
          *
          */
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, JavaFileType.INSTANCE
+      fileType = JavaFileType.INSTANCE
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test 25 percent jump`() {
     doTest(
       "25%",
@@ -90,11 +85,10 @@ class MatchitGeneralTest : VimTestCase() {
         int c;
         int d;
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, HtmlFileType.INSTANCE
+      fileType = HtmlFileType.INSTANCE
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from visual end of line to opening parenthesis`() {
     doTest(
       "v$%",
@@ -104,7 +98,6 @@ class MatchitGeneralTest : VimTestCase() {
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from visual end of line to opening parenthesis then back to closing`() {
     doTest(
       "v$%%",
@@ -114,15 +107,13 @@ class MatchitGeneralTest : VimTestCase() {
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test delete everything from opening parenthesis to closing parenthesis`() {
     doTest(
       "d%",
-      "$c(x == 123)", "", VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, HtmlFileType.INSTANCE
+      "$c(x == 123)", "", fileType = HtmlFileType.INSTANCE
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test delete everything from closing parenthesis to opening parenthesis`() {
     doTest(
       "d%",
@@ -130,7 +121,6 @@ class MatchitGeneralTest : VimTestCase() {
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test delete everything from opening curly brace to closing curly brace`() {
     doTest(
       "d%",
@@ -138,7 +128,6 @@ class MatchitGeneralTest : VimTestCase() {
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test delete everything from closing curly brace to opening curly brace`() {
     doTest(
       "d%",
@@ -146,7 +135,6 @@ class MatchitGeneralTest : VimTestCase() {
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test delete everything from opening square bracket to closing square bracket`() {
     doTest(
       "d%",
@@ -154,7 +142,6 @@ class MatchitGeneralTest : VimTestCase() {
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test delete everything from closing square bracket to opening square bracket`() {
     doTest(
       "d%",
@@ -165,7 +152,6 @@ class MatchitGeneralTest : VimTestCase() {
   /*
    * Tests for visual mode and deleting on the new Matchit patterns.
    */
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from visual end of line to opening angle bracket`() {
     doTest(
       "v$%",
@@ -175,7 +161,6 @@ class MatchitGeneralTest : VimTestCase() {
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from visual end of line to start of for loop`() {
     doTest(
       "v$%",
@@ -189,7 +174,7 @@ class MatchitGeneralTest : VimTestCase() {
           puts n
         en${se}d
       """.trimIndent(),
-      VimStateMachine.Mode.VISUAL, VimStateMachine.SubMode.VISUAL_CHARACTER, "ruby.rb"
+      VimStateMachine.Mode.VISUAL, VimStateMachine.SubMode.VISUAL_CHARACTER, fileName = "ruby.rb"
     )
   }
 
@@ -203,7 +188,6 @@ class MatchitGeneralTest : VimTestCase() {
   """,
     description = "Our code changes the motion type to linewise, but it should not"
   )
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test delete from elseif to else`() {
     doTest(
       "d%",
@@ -232,11 +216,10 @@ class MatchitGeneralTest : VimTestCase() {
               end
         """.trimIndent()
       },
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "ruby.rb"
+      fileName = "ruby.rb"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test delete from elseif to else 2`() {
     doTest(
       "d%",
@@ -256,11 +239,10 @@ class MatchitGeneralTest : VimTestCase() {
           puts "Positive"
         end
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "ruby.rb"
+      fileName = "ruby.rb"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test delete from else to elsif with reverse motion`() {
     doTest(
       "dg%",
@@ -280,11 +262,10 @@ class MatchitGeneralTest : VimTestCase() {
           puts "Positive"
         end
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "ruby.rb"
+      fileName = "ruby.rb"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test delete from opening to closing div`() {
     doTest(
       "d%",
@@ -293,22 +274,22 @@ class MatchitGeneralTest : VimTestCase() {
           <img src="fff">
         </div>
       """.trimIndent(),
-      "$c<", VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, HtmlFileType.INSTANCE
+      "$c<",
+      fileType = HtmlFileType.INSTANCE
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test delete from opening angle bracket to closing angle bracket`() {
     doTest(
       "d%",
       """
         $c<div></div>
       """.trimIndent(),
-      "$c</div>", VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, HtmlFileType.INSTANCE
+      "$c</div>",
+      fileType = HtmlFileType.INSTANCE
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test delete whole function from def`() {
     doTest(
       "d%",
@@ -317,11 +298,11 @@ class MatchitGeneralTest : VimTestCase() {
           puts "hello"
         end
       """.trimIndent(),
-      "", VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "ruby.rb"
+      "",
+      fileName = "ruby.rb"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test delete whole function from def with reverse motion`() {
     doTest(
       "dg%",
@@ -330,11 +311,11 @@ class MatchitGeneralTest : VimTestCase() {
           puts "hello"
         end
       """.trimIndent(),
-      "", VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "ruby.rb"
+      "",
+      fileName = "ruby.rb"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test delete whole function from end`() {
     doTest(
       "d%",
@@ -343,11 +324,11 @@ class MatchitGeneralTest : VimTestCase() {
           puts "hello"
         en${c}d
       """.trimIndent(),
-      "", VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "ruby.rb"
+      "",
+      fileName = "ruby.rb"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test delete whole function from end with reverse motion`() {
     doTest(
       "dg%",
@@ -356,7 +337,8 @@ class MatchitGeneralTest : VimTestCase() {
           puts "hello"
         en${c}d
       """.trimIndent(),
-      "", VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "ruby.rb"
+      "",
+      fileName = "ruby.rb"
     )
   }
 }

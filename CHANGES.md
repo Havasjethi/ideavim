@@ -25,6 +25,15 @@ usual beta standards.
 
 ## To Be Released
 
+### Fixes:
+* [VIM-1758](https://youtrack.jetbrains.com/issue/VIM-1758) Commentary plugin in rider
+* [VIM-1903](https://youtrack.jetbrains.com/issue/VIM-1903) Autoindent now works in rider
+* [VIM-2744](https://youtrack.jetbrains.com/issue/VIM-2744) Fix undo from ex line
+* [VIM-2749](https://youtrack.jetbrains.com/issue/VIM-2749) Fix :tabn and :tabN commands
+* [VIM-2718](https://youtrack.jetbrains.com/issue/VIM-2718) Fixed case where the primary caret was changed
+
+## 1.11.0, 2022-08-09
+
 ### Features:
 * Add `gcu` command for Commentary plugin
 * Add `:Commentary` command, which works great for commands such as `:%g/fun/Commentary`
@@ -36,6 +45,7 @@ usual beta standards.
   E.g. `<Plug>Commentary` instead of `<Plug>(CommentMotion)`. Old mappings are maintained for compatibility.
 * If you open `~/.ideavimrc` in IDE, remove a mapping, and reload the config using the reload button,
   the mapping will actually be unmapped.
+* New vim (and IdeaVim) behaviour: `ci(`& friends searches for the brackets in the line.
 
 ### Fixes:
 * [VIM-2587](https://youtrack.jetbrains.com/issue/VIM-2587) Use ctrl-6 as ctrl-^
@@ -52,11 +62,14 @@ usual beta standards.
 * [VIM-2595](https://youtrack.jetbrains.com/issue/VIM-2595) Support plugins in macro execution
 * [VIM-2671](https://youtrack.jetbrains.com/issue/VIM-2671) Fix using plugins from mappings
 * [VIM-2675](https://youtrack.jetbrains.com/issue/VIM-2675) Fix numbering register in visual mode
-* [VIM-696](https://youtrack.jetbrains.com/issue/VIM-696/vim-selection-issue-after-undo) Fix selection after undo
 * [VIM-744](https://youtrack.jetbrains.com/issue/VIM-744/Use-undoredo-with-count-modifier) Add count to undo/redo
 * [VIM-1862](https://youtrack.jetbrains.com/issue/VIM-1862/Ex-commands-executed-in-keymaps-and-macros-are-added-to-the-command-history) Fix command history
 * [VIM-2227](https://youtrack.jetbrains.com/issue/VIM-2227) Wrong behavior when deleting / changing surround with invalid character
 * [VIM-2691](https://youtrack.jetbrains.com/issue/VIM-2691) Save file on :w
+* [VIM-2710](https://youtrack.jetbrains.com/issue/VIM-2710) Show options value on `set opt`
+* [VIM-913](https://youtrack.jetbrains.com/issue/VIM-913) Partially fix the issue with macros and autocompletion
+* [VIM-2723](https://youtrack.jetbrains.com/issue/VIM-2723) Move focus to editor after :q
+* [VIM-2728](https://youtrack.jetbrains.com/issue/VIM-2728) Give access to global variables
 
 ### Merged PRs:
 * [468](https://github.com/JetBrains/ideavim/pull/468) by [Thomas Schouten](https://github.com/PHPirates): Implement UserDataHolder for EditorDataContext
@@ -68,6 +81,8 @@ usual beta standards.
 * [519](https://github.com/JetBrains/ideavim/pull/519) by [chylex](https://github.com/chylex): Fix(VIM-2227): Wrong behavior when deleting / changing surround with invalid character
 * [525](https://github.com/JetBrains/ideavim/pull/525) by [Matt Ellis](https://github.com/citizenmatt): Improve handling of fractional width fonts
 * [526](https://github.com/JetBrains/ideavim/pull/526) by [Alex Pláte](https://github.com/AlexPl292): Create gradle.properties
+* [528](https://github.com/JetBrains/ideavim/pull/528) by [chylex](https://github.com/chylex): Implement partial code completion support in macros
+* [531](https://github.com/JetBrains/ideavim/pull/531) by [Matt Ellis](https://github.com/citizenmatt): Consolidate doTest methods
 
 ## 1.10.0, 2022-02-17
 

@@ -23,8 +23,6 @@ package org.jetbrains.plugins.ideavim.action.change.change
 import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.command.VimStateMachine
 import com.maddyhome.idea.vim.helper.VimBehaviorDiffers
-import org.jetbrains.plugins.ideavim.SkipNeovimReason
-import org.jetbrains.plugins.ideavim.TestWithoutNeovim
 import org.jetbrains.plugins.ideavim.VimTestCase
 
 class ChangeVisualActionTest : VimTestCase() {
@@ -155,7 +153,6 @@ class ChangeVisualActionTest : VimTestCase() {
     doTest(keys, before, after, VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE)
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.MULTICARET)
   fun `test change visual action`() {
     typeTextInFile(
       injector.parser.parseKeys("v2lc" + "aaa" + "<ESC>"),

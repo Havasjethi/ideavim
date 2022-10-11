@@ -20,10 +20,10 @@ package com.maddyhome.idea.vim.ui
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.PlatformDataKeys
-import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.toolbar.floating.AbstractFloatingToolbarProvider
 import com.intellij.openapi.editor.toolbar.floating.FloatingToolbarComponent
@@ -144,11 +144,13 @@ class ReloadVimRc : DumbAwareAction() {
     e.presentation.isEnabledAndVisible = true
   }
 
+  override fun getActionUpdateThread() = ActionUpdateThread.BGT
+
   override fun actionPerformed(e: AnActionEvent) {
     val editor = e.getData(PlatformDataKeys.EDITOR) ?: return
     FileDocumentManager.getInstance().saveDocumentAsIs(editor.document)
     injector.keyGroup.removeKeyMapping(MappingOwner.IdeaVim.InitScript)
-    service<Troubleshooter>().removeByType("old-action-notation-in-mappings")
+    Troubleshooter.instance.removeByType("old-action-notation-in-mappings")
     executeIdeaVimRc()
   }
 }

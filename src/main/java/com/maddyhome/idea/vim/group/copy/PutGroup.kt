@@ -102,7 +102,6 @@ class PutGroup : VimPutBase() {
       }
     }
 
-    notifyAboutIdeaPut(editor)
     logger.debug("Perform put via plugin")
     val myCarets = if (visualSelection != null) {
       visualSelection.caretsAndSelections.keys.sortedByDescending { it.getLogicalPosition() }
@@ -122,6 +121,7 @@ class PutGroup : VimPutBase() {
     context: ExecutionContext,
     text: ProcessedTextData,
   ) {
+    notifyAboutIdeaPut(editor)
     if (data.visualSelection?.typeInEditor?.isLine == true && editor.isOneLineMode()) return
     val startOffsets = prepareDocumentAndGetStartOffsets(editor, caret, text.typeInRegister, data, additionalData)
 
@@ -190,7 +190,12 @@ class PutGroup : VimPutBase() {
           }
         }
         visualSelection.typeInEditor.isLine -> {
-          if (caret.offset == editor.fileSize && editor.fileSize != 0) {
+          val lastChar = if (editor.fileSize > 0) {
+            editor.document.getText(com.intellij.openapi.util.TextRange(editor.fileSize - 1, editor.fileSize))[0]
+          } else {
+            null
+          }
+          if (caret.offset == editor.fileSize && editor.fileSize != 0 && lastChar != '\n') {
             application.runWriteAction { editor.document.insertString(caret.offset, "\n") }
             listOf(caret.offset + 1)
           } else listOf(caret.offset)

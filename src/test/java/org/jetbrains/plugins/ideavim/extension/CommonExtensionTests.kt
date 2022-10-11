@@ -41,8 +41,6 @@ import com.maddyhome.idea.vim.newapi.ij
 import com.maddyhome.idea.vim.newapi.vim
 import com.maddyhome.idea.vim.options.OptionScope
 import junit.framework.TestCase
-import org.jetbrains.plugins.ideavim.SkipNeovimReason
-import org.jetbrains.plugins.ideavim.TestWithoutNeovim
 import org.jetbrains.plugins.ideavim.VimTestCase
 
 class OpMappingTest : VimTestCase() {
@@ -68,7 +66,6 @@ class OpMappingTest : VimTestCase() {
     super.tearDown()
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.PLUGIN)
   fun `test simple delete`() {
     doTest(
       "dI",
@@ -79,7 +76,6 @@ class OpMappingTest : VimTestCase() {
     )
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.PLUGIN)
   fun `test simple delete backwards`() {
     doTest(
       "dP",
@@ -90,7 +86,6 @@ class OpMappingTest : VimTestCase() {
     )
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.PLUGIN)
   fun `test delete emulate inclusive`() {
     doTest(
       "dU",
@@ -101,7 +96,6 @@ class OpMappingTest : VimTestCase() {
     )
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.PLUGIN)
   fun `test linewise delete`() {
     doTest(
       "dO",
@@ -124,7 +118,6 @@ class OpMappingTest : VimTestCase() {
     )
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.PLUGIN)
   fun `test disable extension via set`() {
     configureByText("${c}I found it in a legendary land")
     typeText(injector.parser.parseKeys("Q"))
@@ -139,7 +132,6 @@ class OpMappingTest : VimTestCase() {
     assertState("I ${c}found it in a legendary land")
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.PLUGIN)
   fun `test disable extension as extension point`() {
     configureByText("${c}I found it in a legendary land")
     typeText(injector.parser.parseKeys("Q"))
@@ -158,7 +150,6 @@ class OpMappingTest : VimTestCase() {
     assertState("I ${c}found it in a legendary land")
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.PLUGIN)
   fun `test disable disposed extension`() {
     configureByText("${c}I found it in a legendary land")
     typeText(injector.parser.parseKeys("Q"))
@@ -176,7 +167,6 @@ class OpMappingTest : VimTestCase() {
     assertState("I ${c}found it in a legendary land")
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.PLUGIN)
   fun `test delayed action`() {
     configureByText("${c}I found it in a legendary land")
     typeText(injector.parser.parseKeys("R"))
@@ -191,7 +181,6 @@ class OpMappingTest : VimTestCase() {
   /**
    * This test tests an intentionally incorrectly implemented action
    */
-  @TestWithoutNeovim(SkipNeovimReason.PLUGIN)
   fun `test delayed incorrect action`() {
     configureByText("${c}I found it in a legendary land")
     typeText(injector.parser.parseKeys("E"))
@@ -221,21 +210,18 @@ class PlugExtensionsTest : VimTestCase() {
     super.tearDown()
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.PLUGIN)
   fun `test enable via plug`() {
     injector.vimscriptExecutor.execute("Plug 'MyTest'", false)
 
     assertTrue(extension.ext.initialized)
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.PLUGIN)
   fun `test enable via plugin`() {
     injector.vimscriptExecutor.execute("Plugin 'MyTest'", false)
 
     assertTrue(extension.ext.initialized)
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.PLUGIN)
   fun `test enable via plug and disable via set`() {
     injector.vimscriptExecutor.execute("Plug 'MyTest'")
     injector.vimscriptExecutor.execute("set noTestExtension")
@@ -261,7 +247,6 @@ class PlugMissingKeysTest : VimTestCase() {
     super.tearDown()
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.PLUGIN)
   fun `test missing keys`() {
     executeLikeVimrc(
       "map myKey <Plug>TestMissing",
@@ -277,7 +262,6 @@ class PlugMissingKeysTest : VimTestCase() {
     TestCase.assertEquals(injector.parser.parseKeys("L"), iKeyMappings.first().first)
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.PLUGIN)
   fun `test missing keys enable plugin first`() {
     executeLikeVimrc(
       "Plug 'MyTest'",
@@ -293,7 +277,6 @@ class PlugMissingKeysTest : VimTestCase() {
     TestCase.assertEquals(injector.parser.parseKeys("L"), iKeyMappings.first().first)
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.PLUGIN)
   fun `test packadd`() {
     assertFalse(injector.optionService.isSet(OptionScope.GLOBAL, "matchit"))
     executeLikeVimrc(
@@ -303,7 +286,6 @@ class PlugMissingKeysTest : VimTestCase() {
     assertTrue(injector.optionService.isSet(OptionScope.GLOBAL, "matchit"))
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.PLUGIN)
   fun `test packadd ex`() {
     assertFalse(injector.optionService.isSet(OptionScope.GLOBAL, "matchit"))
     executeLikeVimrc(

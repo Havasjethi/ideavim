@@ -26,7 +26,6 @@ import com.maddyhome.idea.vim.vimscript.model.datatypes.VimDataType
 import com.maddyhome.idea.vim.vimscript.model.expressions.Variable
 import org.jetbrains.annotations.TestOnly
 
-
 /**
  * COMPATIBILITY-LAYER: Renamed from VimVariableService
  * Please see: https://jb.gg/zo8n0r
@@ -89,7 +88,6 @@ interface VariableService {
    */
   fun isVariableLocked(variable: Variable, editor: VimEditor, context: ExecutionContext, vimContext: VimLContext): Boolean
 
-
   /**
    * Locks variable.
    *
@@ -113,6 +111,8 @@ interface VariableService {
    * @param vimContext vim context
    */
   fun unlockVariable(variable: Variable, depth: Int, editor: VimEditor, context: ExecutionContext, vimContext: VimLContext)
+
+  fun getGlobalVariables(): Map<String, VimDataType>
 
   /**
    * Clears all global variables

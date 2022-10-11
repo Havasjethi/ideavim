@@ -23,8 +23,6 @@ package org.jetbrains.plugins.ideavim.action.change.insert
 import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.command.VimStateMachine
 import com.maddyhome.idea.vim.helper.VimBehaviorDiffers
-import org.jetbrains.plugins.ideavim.SkipNeovimReason
-import org.jetbrains.plugins.ideavim.TestWithoutNeovim
 import org.jetbrains.plugins.ideavim.VimTestCase
 
 class InsertDeletePreviousWordActionTest : VimTestCase() {
@@ -146,7 +144,6 @@ class InsertDeletePreviousWordActionTest : VimTestCase() {
     assertState("hello\n" + "one two \n")
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.MULTICARET)
   fun `test insert delete previous word action`() {
     typeTextInFile(
       injector.parser.parseKeys("i" + "<C-W>" + "<ESC>"),

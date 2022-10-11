@@ -20,26 +20,24 @@ package com.maddyhome.idea.vim.group
 
 import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
-import com.intellij.ide.IdeBundle
 import com.intellij.ide.actions.OpenFileAction
 import com.intellij.ide.actions.RevealFileAction
+import com.intellij.notification.ActionCenter
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationGroupManager
-import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.KeyboardShortcut
 import com.intellij.openapi.ide.CopyPasteManager
-import com.intellij.openapi.keymap.Keymap
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.SystemInfo
-import com.intellij.openapi.util.registry.Registry
 import com.maddyhome.idea.vim.VimPlugin
 import com.maddyhome.idea.vim.helper.MessageHelper
 import com.maddyhome.idea.vim.key.ShortcutOwner
@@ -50,7 +48,6 @@ import com.maddyhome.idea.vim.statistic.ActionTracker
 import com.maddyhome.idea.vim.ui.VimEmulationConfigurable
 import com.maddyhome.idea.vim.vimscript.services.IjVimOptionService
 import com.maddyhome.idea.vim.vimscript.services.VimRcService
-import org.jetbrains.annotations.Nls
 import java.awt.datatransfer.StringSelection
 import java.io.File
 import javax.swing.KeyStroke
@@ -114,23 +111,6 @@ class NotificationService(private val project: Project?) {
     IDEAVIM_NOTIFICATION_TITLE,
     Messages.getQuestionIcon()
   )
-
-  fun specialKeymap(keymap: Keymap, listener: NotificationListener.Adapter) {
-    val notification = IDEAVIM_STICKY_GROUP.createNotification(
-      IDEAVIM_NOTIFICATION_TITLE,
-      "IdeaVim plugin doesn't use the special \"Vim\" keymap any longer. " +
-        "Switching to \"${keymap.presentableName}\" keymap.<br/><br/>" +
-        "Now it is possible to set up:<br/>" +
-        "<ul>" +
-        "<li>Vim keys in your ~/.ideavimrc file using key mapping commands</li>" +
-        "<li>IDE action shortcuts in \"File | Settings | Keymap\"</li>" +
-        "<li>Vim or IDE handlers for conflicting shortcuts in <a href='#settings'>Vim Emulation</a> settings</li>" +
-        "</ul>",
-      NotificationType.INFORMATION
-    )
-    notification.setListener(listener)
-    notification.notify(project)
-  }
 
   fun noVimrcAsDefault() {
     val notification = IDEAVIM_STICKY_GROUP.createNotification(
@@ -208,7 +188,7 @@ class NotificationService(private val project: Project?) {
       Notification(IDEAVIM_NOTIFICATION_ID, IDEAVIM_NOTIFICATION_TITLE, content, NotificationType.INFORMATION).let {
         notification = it
         it.whenExpired { notification = null }
-        it.setContent(it.content + "<br><br><small>Use ${getToolwindowName()} to see previous ids</small>")
+        it.setContent(it.content + "<br><br><small>Use ${ActionCenter.getToolwindowName()} to see previous ids</small>")
 
         it.addAction(StopTracking())
 
@@ -220,15 +200,6 @@ class NotificationService(private val project: Project?) {
       if (id != null) {
         ActionTracker.logTrackedAction(id)
       }
-    }
-
-    // [VERSION UPDATE] 221+ Use ActionCenter.getToolWindowName
-    private fun getToolwindowName(): @Nls String {
-      return IdeBundle.message(if (isEnabled()) "toolwindow.stripe.Notifications" else "toolwindow.stripe.Event_Log")
-    }
-
-    private fun isEnabled(): Boolean {
-      return Registry.`is`("ide.notification.action.center", true)
     }
 
     class CopyActionId(val id: String?, val project: Project?) : DumbAwareAction(MessageHelper.message("action.copy.action.id.text")) {
@@ -251,6 +222,8 @@ class NotificationService(private val project: Project?) {
       override fun update(e: AnActionEvent) {
         e.presentation.isEnabled = id != null
       }
+
+      override fun getActionUpdateThread() = ActionUpdateThread.BGT
     }
 
     class StopTracking : DumbAwareAction("Stop Tracking") {
@@ -287,6 +260,8 @@ class NotificationService(private val project: Project?) {
       val actionText = if (VimRcService.findIdeaVimRc() != null) "Open ~/.ideavimrc" else "Create ~/.ideavimrc"
       e.presentation.text = actionText
     }
+
+    override fun getActionUpdateThread() = ActionUpdateThread.BGT
   }
 
   @Suppress("DialogTitleCapitalization")

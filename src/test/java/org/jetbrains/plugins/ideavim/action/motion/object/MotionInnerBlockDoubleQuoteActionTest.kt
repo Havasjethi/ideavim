@@ -16,21 +16,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.maddyhome.idea.vim.key;
+package org.jetbrains.plugins.ideavim.action.motion.`object`
 
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.Editor;
-import com.maddyhome.idea.vim.command.SelectionType;
-import org.jetbrains.annotations.NotNull;
+import com.maddyhome.idea.vim.command.VimStateMachine
+import org.jetbrains.plugins.ideavim.VimTestCase
 
-/**
- * @author vlan
- */
-public interface OperatorFunction {
-  /**
-   * The value of 'operatorfunc' to be used as the operator function in 'g@'.
-   * <p>
-   * Make sure to synchronize your function properly using read/write actions.
-   */
-  boolean apply(@NotNull Editor editor, @NotNull DataContext context, @NotNull SelectionType selectionType);
+class MotionInnerBlockDoubleQuoteActionTest : VimTestCase() {
+  fun `test change outside quotes`() {
+    doTest("di\"", "${c}print(\"hello\")", "print(\"$c\")", VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE)
+  }
 }

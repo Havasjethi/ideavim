@@ -20,6 +20,7 @@ package com.maddyhome.idea.vim.group;
 
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -27,6 +28,7 @@ import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.fileEditor.impl.EditorWindow;
+import com.intellij.openapi.fileEditor.impl.EditorsSplitters;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
@@ -159,6 +161,10 @@ public class FileGroup extends VimFileBase {
       if (virtualFile != null && window != null) {
         window.closeFile(virtualFile);
       }
+      if (!ApplicationManager.getApplication().isUnitTestMode()) {
+        // This thing doesn't have an implementation in test mode
+        EditorsSplitters.focusDefaultComponentInSplittersIfPresent(project);
+      }
     }
   }
 
@@ -174,6 +180,10 @@ public class FileGroup extends VimFileBase {
     VirtualFile[] editors = fileEditorManager.getOpenFiles();
     if (number >= 0 && number < editors.length) {
       fileEditorManager.closeFile(editors[number], window);
+    }
+    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      // This thing doesn't have an implementation in test mode
+      EditorsSplitters.focusDefaultComponentInSplittersIfPresent(project);
     }
   }
 

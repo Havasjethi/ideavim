@@ -2,9 +2,8 @@ package patches.buildTypes
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.Qodana
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.gradle
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.qodana
-import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.ScheduleTrigger
-import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.v2019_2.ui.*
 
 /*
@@ -16,6 +15,9 @@ changeBuildType(RelativeId("Qodana")) {
     expectSteps {
         qodana {
             name = "Qodana"
+            linter = jvm {
+                version = Qodana.JVMVersion.LATEST
+            }
             param("clonefinder-enable", "true")
             param("clonefinder-languages", "Java")
             param("clonefinder-languages-container", "Java Kotlin")
@@ -29,27 +31,25 @@ changeBuildType(RelativeId("Qodana")) {
         }
     }
     steps {
-        update<Qodana>(0) {
+        insert(0) {
+            gradle {
+                name = "Generate grammar"
+                tasks = "generateGrammarSource"
+                param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
+            }
+        }
+        update<Qodana>(1) {
             clearConditions()
-            linter = jvm {
-                version = Qodana.JVMVersion.LATEST
-            }
-        }
-    }
-
-    triggers {
-        val trigger1 = find<ScheduleTrigger> {
-            schedule {
-                schedulingPolicy = weekly {
-                    dayOfWeek = ScheduleTrigger.DAY.Tuesday
-                }
-                branchFilter = ""
-                triggerBuild = always()
-            }
-        }
-        trigger1.apply {
-            enabled = false
-
+            reportAsTests = true
+            argumentsCommandDocker = "-e QODANA_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJvcmdhbml6YXRpb24iOiIzUFZrQSIsInByb2plY3QiOiIzN1FlQSIsInRva2VuIjoiM0t2bXoifQ.uohp81tM7iAfvvB6k8faarfpV-OjusAaEbWQ8iNrOgs"
+            argumentsEntryPointDocker = "--baseline qodana.sarif.json"
+            param("clonefinder-languages", "")
+            param("collect-anonymous-statistics", "")
+            param("licenseaudit-enable", "")
+            param("clonefinder-languages-container", "")
+            param("clonefinder-queried-project", "")
+            param("clonefinder-enable", "")
+            param("clonefinder-reference-projects", "")
         }
     }
 }

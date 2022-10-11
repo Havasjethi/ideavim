@@ -19,8 +19,6 @@ package com.maddyhome.idea.vim;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManagerCore;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -32,9 +30,9 @@ import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.ex.KeymapManagerEx;
 import com.intellij.openapi.keymap.impl.DefaultKeymap;
-import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
 import com.maddyhome.idea.vim.api.VimInjectorKt;
 import com.maddyhome.idea.vim.api.VimKeyGroup;
@@ -49,7 +47,6 @@ import com.maddyhome.idea.vim.helper.MacKeyRepeat;
 import com.maddyhome.idea.vim.listener.VimListenerManager;
 import com.maddyhome.idea.vim.newapi.IjVimInjector;
 import com.maddyhome.idea.vim.ui.StatusBarIconFactory;
-import com.maddyhome.idea.vim.ui.VimEmulationConfigurable;
 import com.maddyhome.idea.vim.ui.ex.ExEntryPanel;
 import com.maddyhome.idea.vim.vimscript.services.FunctionStorage;
 import com.maddyhome.idea.vim.vimscript.services.IjVimOptionService;
@@ -59,8 +56,6 @@ import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.swing.event.HyperlinkEvent;
 
 import static com.maddyhome.idea.vim.group.EditorGroup.EDITOR_STORE_ELEMENT;
 import static com.maddyhome.idea.vim.group.KeyGroup.SHORTCUT_CONFLICTS_ELEMENT;
@@ -93,6 +88,8 @@ public class VimPlugin implements PersistentStateComponent<Element>, Disposable 
   private static final Logger LOG = Logger.getInstance(VimPlugin.class);
 
   private final @NotNull VimState state = new VimState();
+
+  public Disposable onOffDisposable;
 
   VimPlugin() {
     ApplicationConfigurationMigrator.getInstance().migrate();
@@ -341,6 +338,8 @@ public class VimPlugin implements PersistentStateComponent<Element>, Disposable 
    *      execution, what theoretically may cause bugs (e.g. VIM-2540)
    */
   private void turnOnPlugin() {
+    onOffDisposable = Disposer.newDisposable(this, "IdeaVimOnOffDisposer");
+
     // 1) Update state
     ApplicationManager.getApplication().invokeLater(this::updateState);
 
@@ -376,6 +375,8 @@ public class VimPlugin implements PersistentStateComponent<Element>, Disposable 
 
     // Unregister vim actions in command mode
     RegisterActions.unregisterActions();
+
+    Disposer.dispose(onOffDisposable);
   }
 
   private boolean stateUpdated = false;
@@ -389,7 +390,9 @@ public class VimPlugin implements PersistentStateComponent<Element>, Disposable 
         final Boolean enabled = keyRepeat.isEnabled();
         final Boolean isKeyRepeat = getEditor().isKeyRepeat();
         if ((enabled == null || !enabled) && (isKeyRepeat == null || isKeyRepeat)) {
-          if (VimPlugin.getNotifications().enableRepeatingMode() == Messages.YES) {
+          // This system property is used in IJ ui robot to hide the startup tips
+          boolean showNotification = Boolean.getBoolean("ide.show.tips.on.startup.default.value");
+          if (showNotification && VimPlugin.getNotifications().enableRepeatingMode() == Messages.YES) {
             getEditor().setKeyRepeat(true);
             keyRepeat.setEnabled(true);
           }
@@ -408,12 +411,6 @@ public class VimPlugin implements PersistentStateComponent<Element>, Disposable 
           keymap = manager.getKeymap(DefaultKeymap.getInstance().getDefaultKeymapName());
         }
         assert keymap != null : "Default keymap not found";
-        VimPlugin.getNotifications().specialKeymap(keymap, new NotificationListener.Adapter() {
-          @Override
-          protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
-            ShowSettingsUtil.getInstance().showSettingsDialog(null, VimEmulationConfigurable.class);
-          }
-        });
         manager.setActiveKeymap(keymap);
       }
       if (previousStateVersion > 0 && previousStateVersion < 4) {

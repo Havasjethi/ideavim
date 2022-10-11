@@ -127,7 +127,7 @@ object VimExtensionFacade {
   /** Sets the value of 'operatorfunc' to be used as the operator function in 'g@'. */
   @JvmStatic
   fun setOperatorFunction(function: OperatorFunction) {
-    VimPlugin.getKey().setOperatorFunction(function)
+    VimPlugin.getKey().operatorFunction = function
   }
 
   /**
@@ -186,7 +186,7 @@ object VimExtensionFacade {
 
   @JvmStatic
   fun getRegisterForCaret(register: Char, caret: VimCaret): List<KeyStroke>? {
-    val reg = caret.registerStorage.getRegister(register) ?: return null
+    val reg = caret.registerStorage.getRegister(caret, register) ?: return null
     return reg.keys
   }
 
@@ -199,7 +199,7 @@ object VimExtensionFacade {
   /** Set the current contents of the given register */
   @JvmStatic
   fun setRegisterForCaret(register: Char, caret: VimCaret, keys: List<KeyStroke?>?) {
-    caret.registerStorage.setKeys(register, keys?.filterNotNull() ?: emptyList())
+    caret.registerStorage.setKeys(caret, register, keys?.filterNotNull() ?: emptyList())
   }
 
   /** Set the current contents of the given register */

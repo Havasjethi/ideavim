@@ -18,9 +18,6 @@
 
 package org.jetbrains.plugins.ideavim.extension.matchit
 
-import com.maddyhome.idea.vim.command.VimStateMachine
-import org.jetbrains.plugins.ideavim.SkipNeovimReason
-import org.jetbrains.plugins.ideavim.TestWithoutNeovim
 import org.jetbrains.plugins.ideavim.VimTestCase
 
 class MatchitCTest : VimTestCase() {
@@ -30,7 +27,6 @@ class MatchitCTest : VimTestCase() {
     enableExtensions("matchit")
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from #if to #endif`() {
     doTest(
       "%",
@@ -42,11 +38,10 @@ class MatchitCTest : VimTestCase() {
         #if !defined (VAL_1)
         $c#endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from whitespace before #if to #endif`() {
     doTest(
       "%",
@@ -58,11 +53,10 @@ class MatchitCTest : VimTestCase() {
            #if !defined (VAL_1)
         $c#endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from #if to #elif`() {
     doTest(
       "%",
@@ -78,11 +72,10 @@ class MatchitCTest : VimTestCase() {
         $c#elif !defined (VAL_2)
           #define VAL_2 2
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from #if to #else`() {
     doTest(
       "%",
@@ -98,11 +91,10 @@ class MatchitCTest : VimTestCase() {
         $c#else
           #define VAL_2 2
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from #elif to #else`() {
     doTest(
       "%",
@@ -114,11 +106,10 @@ class MatchitCTest : VimTestCase() {
         #elif !defined (VAL_2)
         $c#else
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from whitespace before #elif to #else`() {
     doTest(
       "%",
@@ -130,11 +121,10 @@ class MatchitCTest : VimTestCase() {
            #elif !defined (VAL_2)
         $c#else
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from #else to #endif`() {
     doTest(
       "%",
@@ -146,11 +136,10 @@ class MatchitCTest : VimTestCase() {
         #else
         $c#endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from whitespace before #else to #endif`() {
     doTest(
       "%",
@@ -162,11 +151,10 @@ class MatchitCTest : VimTestCase() {
            #else !defined (VAL_2)
         $c#endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from #endif to #if`() {
     doTest(
       "%",
@@ -188,11 +176,10 @@ class MatchitCTest : VimTestCase() {
           #define VAL_3 3
         #endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from #ifdef to #endif`() {
     doTest(
       "%",
@@ -204,11 +191,10 @@ class MatchitCTest : VimTestCase() {
         #ifdef DEBUG
         $c#endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from #ifdef to #elif`() {
     doTest(
       "%",
@@ -220,11 +206,10 @@ class MatchitCTest : VimTestCase() {
         #ifdef DEBUG
         $c#elif PROD
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from #ifdef to #else`() {
     doTest(
       "%",
@@ -236,11 +221,10 @@ class MatchitCTest : VimTestCase() {
         #ifdef DEBUG
         $c#else
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from #endif to #ifdef`() {
     doTest(
       "%",
@@ -252,11 +236,10 @@ class MatchitCTest : VimTestCase() {
         $c#ifdef DEBUG
         #endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from #ifndef to #endif`() {
     doTest(
       "%",
@@ -268,11 +251,10 @@ class MatchitCTest : VimTestCase() {
         #ifndef DEBUG
         $c#endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from #ifndef to #elif`() {
     doTest(
       "%",
@@ -284,11 +266,10 @@ class MatchitCTest : VimTestCase() {
         #ifndef DEBUG
         $c#elif PROD
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from #ifndef to #else`() {
     doTest(
       "%",
@@ -300,11 +281,10 @@ class MatchitCTest : VimTestCase() {
         #ifndef DEBUG
         $c#else
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from #endif to #ifndef`() {
     doTest(
       "%",
@@ -316,11 +296,10 @@ class MatchitCTest : VimTestCase() {
         $c#ifndef DEBUG
         #endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test don't jump from malformed #if`() {
     doTest(
       "%",
@@ -332,11 +311,10 @@ class MatchitCTest : VimTestCase() {
         $c#ifff DEBUG
         #endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from #if with whitespace to #endif`() {
     doTest(
       "%",
@@ -348,11 +326,10 @@ class MatchitCTest : VimTestCase() {
         #  if DEBUG
         $c#endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from nested #if to #endif`() {
     doTest(
       "%",
@@ -368,7 +345,7 @@ class MatchitCTest : VimTestCase() {
         $c#  endif
         #endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
@@ -376,7 +353,6 @@ class MatchitCTest : VimTestCase() {
    * Tests for reverse g% motion
    */
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from #if to #endif`() {
     doTest(
       "g%",
@@ -388,11 +364,10 @@ class MatchitCTest : VimTestCase() {
         #if !defined (VAL_1)
         $c#endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from whitespace before #if to #endif`() {
     doTest(
       "g%",
@@ -404,11 +379,10 @@ class MatchitCTest : VimTestCase() {
            #if !defined (VAL_1)
         $c#endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from #endif to #if with whitespace`() {
     doTest(
       "g%",
@@ -420,11 +394,10 @@ class MatchitCTest : VimTestCase() {
         $c#  if DEBUG
         #endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from #endif to #else`() {
     doTest(
       "g%",
@@ -438,11 +411,10 @@ class MatchitCTest : VimTestCase() {
           #define VAL_3 3
         #endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from #else to #elif`() {
     doTest(
       "g%",
@@ -460,11 +432,10 @@ class MatchitCTest : VimTestCase() {
           #define VAL_3 3
         #endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from whitespace before #else to #elif`() {
     doTest(
       "g%",
@@ -482,11 +453,10 @@ class MatchitCTest : VimTestCase() {
             #define VAL_3 3
         #endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from #elif to #if`() {
     doTest(
       "g%",
@@ -502,11 +472,10 @@ class MatchitCTest : VimTestCase() {
         #elif !defined (VAL_2)
           #define VAL_2 2
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from #ifdef to #endif`() {
     doTest(
       "g%",
@@ -518,11 +487,10 @@ class MatchitCTest : VimTestCase() {
         #ifdef DEBUG
         $c#endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from #endif to #ifdef`() {
     doTest(
       "g%",
@@ -534,11 +502,10 @@ class MatchitCTest : VimTestCase() {
         $c#ifdef DEBUG
         #endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from #else to #ifdef`() {
     doTest(
       "g%",
@@ -550,11 +517,10 @@ class MatchitCTest : VimTestCase() {
         $c#ifdef DEBUG
         #else
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from #elif to #ifdef`() {
     doTest(
       "g%",
@@ -566,11 +532,10 @@ class MatchitCTest : VimTestCase() {
         $c#ifdef DEBUG
         #elif PROD
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from #ifndef to #endif`() {
     doTest(
       "g%",
@@ -582,11 +547,10 @@ class MatchitCTest : VimTestCase() {
         #ifndef DEBUG
         $c#endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from #endif to #ifndef`() {
     doTest(
       "g%",
@@ -598,11 +562,10 @@ class MatchitCTest : VimTestCase() {
         $c#ifndef DEBUG
         #endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from #elif to #ifndef`() {
     doTest(
       "g%",
@@ -614,11 +577,10 @@ class MatchitCTest : VimTestCase() {
         $c#ifndef DEBUG
         #elif PROD
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from #else to #ifndef`() {
     doTest(
       "g%",
@@ -630,7 +592,7 @@ class MatchitCTest : VimTestCase() {
         $c#ifndef DEBUG
         #else
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "main.c"
+      fileName = "main.c"
     )
   }
 }

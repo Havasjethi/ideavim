@@ -21,8 +21,8 @@ package com.maddyhome.idea.vim.listener
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.AnActionResult
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.actionSystem.ex.AnActionListener
 import com.intellij.openapi.editor.Caret
@@ -35,7 +35,6 @@ import com.maddyhome.idea.vim.group.visual.VimVisualTimer
 import com.maddyhome.idea.vim.helper.fileSize
 import com.maddyhome.idea.vim.helper.inVisualMode
 import com.maddyhome.idea.vim.newapi.vim
-import org.jetbrains.annotations.NotNull
 
 /**
  * A collection of hacks to improve the interaction with fancy AppCode templates
@@ -50,16 +49,16 @@ object AppCodeTemplates {
 
     private var editor: Editor? = null
 
-    override fun beforeActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
+    override fun beforeActionPerformed(action: AnAction, event: AnActionEvent) {
       if (!VimPlugin.isEnabled()) return
 
-      val hostEditor = dataContext.getData(CommonDataKeys.HOST_EDITOR)
+      val hostEditor = event.dataContext.getData(CommonDataKeys.HOST_EDITOR)
       if (hostEditor != null) {
         editor = hostEditor
       }
     }
 
-    override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
+    override fun afterActionPerformed(action: AnAction, event: AnActionEvent, result: AnActionResult) {
       if (!VimPlugin.isEnabled()) return
 
       if (ActionManager.getInstance().getId(action) == IdeActions.ACTION_CHOOSE_LOOKUP_ITEM) {
@@ -77,8 +76,8 @@ object AppCodeTemplates {
 
   @JvmStatic
   fun onMovement(
-    editor: @NotNull Editor,
-    caret: @NotNull Caret,
+    editor: Editor,
+    caret: Caret,
     toRight: Boolean,
   ) {
     val offset = caret.offset

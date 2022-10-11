@@ -131,7 +131,6 @@ class RepeatChangeActionTest : VimTestCase() {
     doTest(keys, before, after, VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE)
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.MULTICARET)
   fun `test multicaret`() {
     val keys = listOf("v2erXj^", ".")
     val before = """
@@ -317,12 +316,14 @@ class RepeatChangeActionTest : VimTestCase() {
     doTest(keys, before, after, VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE)
   }
 
-  @VimBehaviorDiffers(originalVimAfter = """
+  @VimBehaviorDiffers(
+    originalVimAfter = """
     
         Three
         Two
         One
-  """)
+  """
+  )
   fun `test redo register feature`() {
     doTest(
       listOf("dd", "dd", "dd", "\"1p", ".", "."),

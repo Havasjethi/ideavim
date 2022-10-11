@@ -15,7 +15,9 @@ buildscript {
         classpath("com.github.AlexPl292:mark-down-to-slack:1.1.2")
         classpath("org.eclipse.jgit:org.eclipse.jgit:6.1.0.202203080745-r")
         classpath("org.kohsuke:github-api:1.305")
-        classpath("org.jetbrains:markdown:0.3.1")
+
+        // This comes from the changelog plugin
+//        classpath("org.jetbrains:markdown:0.3.1")
     }
 }
 
@@ -24,11 +26,11 @@ plugins {
     java
     kotlin("jvm") version "1.6.21"
 
-    id("org.jetbrains.intellij") version "1.7.0-SNAPSHOT"
+    id("org.jetbrains.intellij") version "1.9.0"
     id("org.jetbrains.changelog") version "1.3.1"
 
     // ktlint linter - read more: https://github.com/JLLeitschuh/ktlint-gradle
-    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
+    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
 }
 
 // Import variables from gradle.properties file
@@ -71,6 +73,8 @@ dependencies {
     antlr("org.antlr:antlr4:$antlrVersion")
 
     api(project(":vim-engine"))
+
+    testApi("com.squareup.okhttp3:okhttp:4.10.0")
 }
 
 configurations {
@@ -148,7 +152,7 @@ tasks {
     compileKotlin {
         kotlinOptions {
             jvmTarget = javaVersion
-            apiVersion = "1.5"
+            apiVersion = "1.6"
             freeCompilerArgs = listOf("-Xjvm-default=all-compatibility")
 //            allWarningsAsErrors = true
         }
@@ -156,7 +160,7 @@ tasks {
     compileTestKotlin {
         kotlinOptions {
             jvmTarget = javaVersion
-            apiVersion = "1.5"
+            apiVersion = "1.6"
 //            allWarningsAsErrors = true
         }
     }
@@ -238,7 +242,7 @@ tasks {
 
     // Don't forget to update plugin.xml
     patchPluginXml {
-        sinceBuild.set("213")
+        sinceBuild.set("222")
     }
 }
 
@@ -246,6 +250,7 @@ tasks {
 
 ktlint {
     disabledRules.add("no-wildcard-imports")
+    version.set("0.43.0")
 }
 
 // --- Tests
@@ -270,7 +275,7 @@ changelog {
     itemPrefix.set("*")
     path.set("${project.projectDir}/CHANGES.md")
     unreleasedTerm.set("To Be Released")
-    headerParserRegex.set("\\d\\.\\d+(.\\d+)?".toRegex())
+    headerParserRegex.set("(\\d\\.\\d+(.\\d+)?)".toRegex())
 //    header = { "${project.version}" }
 //    version = "0.60"
 }
@@ -323,13 +328,22 @@ tasks.register("slackNotification") {
             println("Response code: $postRc")
             if (postRc == 200) {
                 println(inputStream.bufferedReader().use { it.readText() })
+            } else {
+                println(errorStream.bufferedReader().use { it.readText() })
             }
         }
     }
 }
 
-// --- Update authors
+// Uncomment to enable FUS testing mode
+// tasks {
+//    withType<org.jetbrains.intellij.tasks.RunIdeTask> {
+//        jvmArgs("-Didea.is.internal=true")
+//        jvmArgs("-Dfus.internal.test.mode=true")
+//    }
+// }
 
+// --- Update authors
 tasks.register("updateAuthors") {
     doLast {
         val uncheckedEmails = setOf(

@@ -20,12 +20,9 @@ package org.jetbrains.plugins.ideavim.action.change.insert
 
 import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.command.VimStateMachine
-import org.jetbrains.plugins.ideavim.SkipNeovimReason
-import org.jetbrains.plugins.ideavim.TestWithoutNeovim
 import org.jetbrains.plugins.ideavim.VimTestCase
 
 class InsertAfterLineEndActionTest : VimTestCase() {
-  @TestWithoutNeovim(SkipNeovimReason.MULTICARET)
   fun `test insert after line end action`() {
     typeTextInFile(
       injector.parser.parseKeys("A" + " four" + "<ESC>"),
@@ -44,7 +41,6 @@ class InsertAfterLineEndActionTest : VimTestCase() {
     )
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.MULTICARET)
   fun `test multiple carets`() {
     doTest(
       "AHello<esc>",

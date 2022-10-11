@@ -18,9 +18,6 @@
 
 package org.jetbrains.plugins.ideavim.extension.matchit
 
-import com.maddyhome.idea.vim.command.VimStateMachine
-import org.jetbrains.plugins.ideavim.SkipNeovimReason
-import org.jetbrains.plugins.ideavim.TestWithoutNeovim
 import org.jetbrains.plugins.ideavim.VimTestCase
 
 class MatchitGNUMakeTest : VimTestCase() {
@@ -30,7 +27,6 @@ class MatchitGNUMakeTest : VimTestCase() {
     enableExtensions("matchit")
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from define to endef`() {
     doTest(
       "%",
@@ -46,11 +42,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           second line
         ${c}endef
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from endef to define`() {
     doTest(
       "%",
@@ -66,11 +61,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           second line
         endef
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from ifdef to endif`() {
     doTest(
       "%",
@@ -84,11 +78,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info defined)
         ${c}endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from endif to ifdef`() {
     doTest(
       "%",
@@ -102,11 +95,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info defined)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from ifndef to endif`() {
     doTest(
       "%",
@@ -120,11 +112,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not defined)
         ${c}endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from endif to ifndef`() {
     doTest(
       "%",
@@ -138,11 +129,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not defined)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from ifeq to endif`() {
     doTest(
       "%",
@@ -156,11 +146,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info empty)
         ${c}endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from endif to ifeq`() {
     doTest(
       "%",
@@ -174,11 +163,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info empty)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from ifneq to endif`() {
     doTest(
       "%",
@@ -192,11 +180,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not empty)
         ${c}endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from endif to ifneq`() {
     doTest(
       "%",
@@ -210,11 +197,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not empty)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from ifneq to else`() {
     doTest(
       "%",
@@ -228,11 +214,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not empty)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from ifeq to else in ifeq-else block`() {
     doTest(
       "%",
@@ -254,11 +239,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not x86 based)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from else ifeq to else`() {
     doTest(
       "%",
@@ -280,11 +264,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not x86 based)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from ifeq in else block to else`() {
     doTest(
       "%",
@@ -306,11 +289,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not x86 based)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from else to endif in ifeq-else block`() {
     doTest(
       "%",
@@ -332,11 +314,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not x86 based)
         ${c}endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from endif to ifeq in ifeq-else block`() {
     doTest(
       "%",
@@ -358,11 +339,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not x86 based)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from ifneq to else in ifneq-else block`() {
     doTest(
       "%",
@@ -384,11 +364,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info x86 based)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from else ifneq to else`() {
     doTest(
       "%",
@@ -410,11 +389,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info x86 based)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from ifneq in else block to else`() {
     doTest(
       "%",
@@ -436,11 +414,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info x86 based)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from else to endif in ifneq-else block`() {
     doTest(
       "%",
@@ -462,11 +439,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info x86 based)
         ${c}endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test jump from endif to ifneq in ifneq-else block`() {
     doTest(
       "%",
@@ -488,13 +464,12 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info x86 based)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
   // Reverse tests
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from define to endef`() {
     doTest(
       "g%",
@@ -510,11 +485,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           second line
         ${c}endef
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from endef to define`() {
     doTest(
       "g%",
@@ -530,11 +504,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           second line
         endef
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from ifdef to endif`() {
     doTest(
       "g%",
@@ -548,11 +521,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info defined)
         ${c}endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from endif to ifdef`() {
     doTest(
       "g%",
@@ -566,11 +538,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info defined)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from ifndef to endif`() {
     doTest(
       "g%",
@@ -584,11 +555,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not defined)
         ${c}endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from endif to ifndef`() {
     doTest(
       "g%",
@@ -602,11 +572,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not defined)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from ifeq to endif`() {
     doTest(
       "g%",
@@ -620,11 +589,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info empty)
         ${c}endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from endif to ifeq`() {
     doTest(
       "g%",
@@ -638,11 +606,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info empty)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from ifneq to endif`() {
     doTest(
       "g%",
@@ -656,11 +623,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not empty)
         ${c}endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from endif to ifneq`() {
     doTest(
       "g%",
@@ -674,11 +640,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not empty)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from ifneq to else`() {
     doTest(
       "g%",
@@ -692,11 +657,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not empty)
         else
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from ifeq to endif in ifeq-else block`() {
     doTest(
       "g%",
@@ -718,11 +682,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not x86 based)
         ${c}endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from else ifeq to ifeq`() {
     doTest(
       "g%",
@@ -744,11 +707,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not x86 based)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from ifeq in else block to ifeq`() {
     doTest(
       "g%",
@@ -770,11 +732,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not x86 based)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from else to else in ifeq-else block`() {
     doTest(
       "g%",
@@ -796,11 +757,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not x86 based)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from endif to else in ifeq-else block`() {
     doTest(
       "g%",
@@ -822,11 +782,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info not x86 based)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from ifneq to endif in ifneq-else block`() {
     doTest(
       "g%",
@@ -848,11 +807,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info x86 based)
         ${c}endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from else ifneq to ifneq`() {
     doTest(
       "g%",
@@ -874,11 +832,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info x86 based)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from ifneq in else block to ifneq`() {
     doTest(
       "g%",
@@ -900,11 +857,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info x86 based)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from else to else in ifneq-else block`() {
     doTest(
       "g%",
@@ -926,11 +882,10 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info x86 based)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 
-  @TestWithoutNeovim(reason = SkipNeovimReason.PLUGIN)
   fun `test reverse jump from endif to else in ifneq-else block`() {
     doTest(
       "g%",
@@ -952,7 +907,7 @@ class MatchitGNUMakeTest : VimTestCase() {
           $(info x86 based)
         endif
       """.trimIndent(),
-      VimStateMachine.Mode.COMMAND, VimStateMachine.SubMode.NONE, "Makefile"
+      fileName = "Makefile"
     )
   }
 }

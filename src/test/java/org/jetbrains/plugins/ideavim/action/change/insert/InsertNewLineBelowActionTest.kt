@@ -117,7 +117,6 @@ class InsertNewLineBelowActionTest : VimTestCase() {
     assertState(after)
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.MULTICARET)
   fun `test insert new line below with multiple carets`() {
     val before = """    I fou${c}nd it in a legendary land
         |    all rocks and laven${c}der and tufted grass,
@@ -190,6 +189,7 @@ class InsertNewLineBelowActionTest : VimTestCase() {
     performTest("o", after, VimStateMachine.Mode.INSERT, VimStateMachine.SubMode.NONE)
   }
 
+  @TestWithoutNeovim(reason = SkipNeovimReason.FOLDING, "Neovim doesn't support arbitrary folds")
   fun `test insert new line below with folds 2`() {
     val before = """I found it in a legendary land
         |${c}all rocks [and lavender and tufted grass,

@@ -21,8 +21,6 @@ package org.jetbrains.plugins.ideavim.ex.implementation.commands
 import com.maddyhome.idea.vim.api.injector
 import com.maddyhome.idea.vim.command.VimStateMachine
 import com.maddyhome.idea.vim.helper.VimBehaviorDiffers
-import org.jetbrains.plugins.ideavim.SkipNeovimReason
-import org.jetbrains.plugins.ideavim.TestWithoutNeovim
 import org.jetbrains.plugins.ideavim.VimTestCase
 
 class JoinLinesCommandTest : VimTestCase() {
@@ -97,7 +95,6 @@ class JoinLinesCommandTest : VimTestCase() {
     )
   }
 
-  @TestWithoutNeovim(SkipNeovimReason.MULTICARET)
   fun `test join multicaret`() {
     configureByText(
       """

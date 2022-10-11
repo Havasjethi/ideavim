@@ -20,7 +20,9 @@ package com.maddyhome.idea.vim.group;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.intellij.codeInsight.actions.AsyncActionExecutionService;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
@@ -33,10 +35,13 @@ import com.intellij.openapi.editor.event.EditorMouseEvent;
 import com.intellij.openapi.editor.event.EditorMouseListener;
 import com.intellij.openapi.editor.impl.TextRangeInterval;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.Balloon;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.ui.JBColor;
 import com.intellij.util.containers.ContainerUtil;
 import com.maddyhome.idea.vim.EventFacade;
 import com.maddyhome.idea.vim.VimPlugin;
@@ -48,13 +53,19 @@ import com.maddyhome.idea.vim.ex.ranges.LineRange;
 import com.maddyhome.idea.vim.group.visual.VimSelection;
 import com.maddyhome.idea.vim.group.visual.VisualModeHelperKt;
 import com.maddyhome.idea.vim.helper.*;
+import com.maddyhome.idea.vim.icons.VimIcons;
 import com.maddyhome.idea.vim.key.KeyHandlerKeeper;
 import com.maddyhome.idea.vim.listener.VimInsertListener;
-import com.maddyhome.idea.vim.newapi.*;
+import com.maddyhome.idea.vim.newapi.IjExecutionContext;
+import com.maddyhome.idea.vim.newapi.IjExecutionContextKt;
+import com.maddyhome.idea.vim.newapi.IjVimCaret;
+import com.maddyhome.idea.vim.newapi.IjVimEditor;
 import com.maddyhome.idea.vim.options.OptionConstants;
 import com.maddyhome.idea.vim.options.OptionScope;
 import com.maddyhome.idea.vim.vimscript.model.datatypes.VimString;
 import kotlin.Pair;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -84,6 +95,8 @@ public class ChangeGroup extends VimChangeGroupBase {
   @NonNls private static final String MAX_HEX_INTEGER = "ffffffffffffffff";
 
   private final List<VimInsertListener> insertListeners = ContainerUtil.createLockFreeCopyOnWriteList();
+
+  private long lastShownTime = 0L;
 
   /**
    * Inserts a new line above the caret position
@@ -571,17 +584,31 @@ public class ChangeGroup extends VimChangeGroupBase {
     final int startOffset = injector.getEngineEditorHelper().getLineStartForOffset(editor, range.getStartOffset());
     final int endOffset = injector.getEngineEditorHelper().getLineEndForOffset(editor, range.getEndOffset());
 
-    VisualModeHelperKt.vimSetSystemSelectionSilently(((IjVimEditor) editor).getEditor().getSelectionModel(), startOffset, endOffset);
+    Editor ijEditor = ((IjVimEditor)editor).getEditor();
+    VisualModeHelperKt.vimSetSystemSelectionSilently(ijEditor.getSelectionModel(), startOffset, endOffset);
 
-    NativeAction joinLinesAction = VimInjectorKt.getInjector().getNativeActionManager().getIndentLines();
-    if (joinLinesAction != null) {
-      VimInjectorKt.getInjector().getActionExecutor().executeAction(joinLinesAction, context);
+    Project project = ijEditor.getProject();
+    Function0<Unit> actionExecution = () -> {
+      NativeAction joinLinesAction = VimInjectorKt.getInjector().getNativeActionManager().getIndentLines();
+      if (joinLinesAction != null) {
+        VimInjectorKt.getInjector().getActionExecutor().executeAction(joinLinesAction, context);
+      }
+      return null;
+    };
+    Function0<Unit> afterAction = () -> {
+      final int firstLine = editor.offsetToLogicalPosition(Math.min(startOffset, endOffset)).getLine();
+      final int newOffset = VimPlugin.getMotion().moveCaretToLineStartSkipLeading(editor, firstLine);
+      injector.getMotion().moveCaret(editor, caret, newOffset);
+      restoreCursor(editor, caret, ((IjVimCaret)caret).getCaret().getLogicalPosition().line);
+      return null;
+    };
+    if (project != null) {
+      AsyncActionExecutionService.Companion.getInstance(project)
+        .withExecutionAfterAction(IdeActions.ACTION_EDITOR_AUTO_INDENT_LINES, actionExecution, afterAction);
+    } else {
+      actionExecution.invoke();
+      afterAction.invoke();
     }
-
-    final int firstLine = editor.offsetToLogicalPosition(Math.min(startOffset, endOffset)).getLine();
-    final int newOffset = VimPlugin.getMotion().moveCaretToLineStartSkipLeading(editor, firstLine);
-    injector.getMotion().moveCaret(editor, caret, newOffset);
-    restoreCursor(editor, caret, ((IjVimCaret) caret).getCaret().getLogicalPosition().line);
   }
 
   @Override
@@ -773,6 +800,22 @@ public class ChangeGroup extends VimChangeGroupBase {
                                         @NotNull TextRange selectedRange,
                                         final int count,
                                         boolean avalanche) {
+
+    // Just an easter egg
+    if (avalanche) {
+      long currentTime = System.currentTimeMillis();
+      if (currentTime - lastShownTime > 60_000) {
+        lastShownTime = currentTime;
+        ApplicationManager.getApplication().invokeLater(() -> {
+          final Balloon balloon = JBPopupFactory.getInstance()
+            .createHtmlTextBalloonBuilder("Wow, nice vim skills!", VimIcons.IDEAVIM, JBColor.background(), null)
+            .createBalloon();
+          balloon.show(JBPopupFactory.getInstance().guessBestPopupLocation(((IjVimEditor)editor).getEditor()),
+                       Balloon.Position.below);
+        });
+      }
+    }
+
     String nf = ((VimString) VimPlugin.getOptionService().getOptionValue(new OptionScope.LOCAL(editor), OptionConstants.nrformatsName, OptionConstants.nrformatsName)).getValue();
     boolean alpha = nf.contains("alpha");
     boolean hex = nf.contains("hex");

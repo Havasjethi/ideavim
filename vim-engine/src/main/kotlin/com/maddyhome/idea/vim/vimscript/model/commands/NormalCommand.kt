@@ -23,20 +23,22 @@ import com.maddyhome.idea.vim.api.ExecutionContext
 import com.maddyhome.idea.vim.api.VimEditor
 import com.maddyhome.idea.vim.api.VimLogicalPosition
 import com.maddyhome.idea.vim.api.injector
-import com.maddyhome.idea.vim.command.VimStateMachine
 import com.maddyhome.idea.vim.command.OperatorArguments
+import com.maddyhome.idea.vim.command.VimStateMachine
 import com.maddyhome.idea.vim.ex.ranges.Ranges
-import com.maddyhome.idea.vim.helper.vimStateMachine
 import com.maddyhome.idea.vim.helper.mode
+import com.maddyhome.idea.vim.helper.vimStateMachine
 import com.maddyhome.idea.vim.options.OptionConstants
 import com.maddyhome.idea.vim.options.OptionScope
 import com.maddyhome.idea.vim.vimscript.model.ExecutionResult
 
 data class NormalCommand(val ranges: Ranges, val argument: String) : Command.SingleExecution(ranges, argument) {
-  override val argFlags = flags(RangeFlag.RANGE_OPTIONAL,
+  override val argFlags = flags(
+    RangeFlag.RANGE_OPTIONAL,
     ArgumentFlag.ARGUMENT_OPTIONAL,
     Access.WRITABLE,
-    Flag.SAVE_VISUAL)
+    Flag.SAVE_VISUAL
+  )
 
   override fun processCommand(editor: VimEditor, context: ExecutionContext, operatorArguments: OperatorArguments): ExecutionResult {
     if (injector.optionService.isSet(OptionScope.GLOBAL, OptionConstants.ideadelaymacroName)) {
@@ -64,6 +66,9 @@ data class NormalCommand(val ranges: Ranges, val argument: String) : Command.Sin
       VimStateMachine.Mode.INSERT, VimStateMachine.Mode.REPLACE -> editor.exitInsertMode(context, OperatorArguments(false, 1, commandState.mode, commandState.subMode))
       VimStateMachine.Mode.SELECT -> editor.exitSelectModeNative(false)
       VimStateMachine.Mode.OP_PENDING, VimStateMachine.Mode.COMMAND -> Unit
+      VimStateMachine.Mode.INSERT_NORMAL -> Unit
+      VimStateMachine.Mode.INSERT_VISUAL -> Unit
+      VimStateMachine.Mode.INSERT_SELECT -> Unit
     }
     val range = getLineRange(editor, editor.primaryCaret())
 

@@ -71,6 +71,10 @@ abstract class VimVariableServiceBase : VariableService {
     value.unlockVar(depth)
   }
 
+  override fun getGlobalVariables(): Map<String, VimDataType> {
+    return globalVariables
+  }
+
   override fun storeVariable(variable: Variable, value: VimDataType, editor: VimEditor, context: ExecutionContext, vimContext: VimLContext) {
     val scope = variable.scope ?: getDefaultVariableScope(vimContext)
     val name = variable.name.evaluate(editor, context, vimContext).value
@@ -92,7 +96,7 @@ abstract class VimVariableServiceBase : VariableService {
     return when (scope) {
       Scope.GLOBAL_VARIABLE -> getGlobalVariableValue(name)
       Scope.SCRIPT_VARIABLE -> getScriptVariable(name, vimContext)
-      Scope.WINDOW_VARIABLE-> getWindowVariable(name, editor)
+      Scope.WINDOW_VARIABLE -> getWindowVariable(name, editor)
       Scope.TABPAGE_VARIABLE -> getTabVariable(name, editor)
       Scope.FUNCTION_VARIABLE -> getFunctionVariable(name, vimContext)
       Scope.LOCAL_VARIABLE -> getLocalVariable(name, vimContext)
@@ -105,7 +109,7 @@ abstract class VimVariableServiceBase : VariableService {
     return getNullableVariableValue(variable, editor, context, vimContext)
       ?: throw ExException(
         "E121: Undefined variable: " +
-          (if (variable.scope != null) variable.scope!!.c + ":" else "") +
+          (if (variable.scope != null) variable.scope.c + ":" else "") +
           variable.name.evaluate(editor, context, vimContext).value
       )
   }
@@ -174,7 +178,7 @@ abstract class VimVariableServiceBase : VariableService {
   }
 
   protected open fun getVimVariable(name: String, editor: VimEditor, context: ExecutionContext, vimContext: VimLContext): VimDataType? {
-        throw ExException("The 'v:' scope is not implemented yet :(")
+    throw ExException("The 'v:' scope is not implemented yet :(")
   }
 
   protected open fun storeGlobalVariable(name: String, value: VimDataType) {
